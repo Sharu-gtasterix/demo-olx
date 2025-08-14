@@ -16,23 +16,39 @@ import SignupScreen from './src/screens/SignupScreen';
 // Custom tab bar
 import CustomTabBar from './src/components/CustomTabBar';
 
-// Home stack (with HomeScreen and CarListScreen)
+// Home stack screens
 import HomeScreen from './src/screens/HomeScreen';
 import CarListScreen from './src/screens/CarListScreen';
-import { createNativeStackNavigator as createHomeStack } from '@react-navigation/native-stack';
+import ProductDetailsScreen from './src/screens/ProductDetailsScreen';
+
+// Types
+type Car = {
+  id: string;
+  title: string;
+  price: string;
+  specs: string;
+  location: string;
+  image: any;
+  timer: string;
+};
 
 type HomeStackParamList = {
   HomeScreen: undefined;
   CarListScreen: { categoryId: string; title: string };
+  ProductDetail: { car: Car };
 };
 
-const HomeStackNav = createHomeStack<HomeStackParamList>();
+const HomeStackNav = createNativeStackNavigator<HomeStackParamList>();
 
 function HomeStack() {
   return (
     <HomeStackNav.Navigator screenOptions={{ headerShown: false }}>
       <HomeStackNav.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStackNav.Screen name="CarListScreen" component={CarListScreen} />
+      <HomeStackNav.Screen
+        name="ProductDetail"
+        component={ProductDetailsScreen}
+      />
     </HomeStackNav.Navigator>
   );
 }
@@ -63,8 +79,9 @@ export const useAuth = () => {
   return context;
 };
 
-// Auth provider
-const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 

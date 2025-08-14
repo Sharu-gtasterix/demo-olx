@@ -8,9 +8,27 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
-const cars = [
+// Define the Car type to keep it clean
+type Car = {
+  id: string;
+  title: string;
+  price: string;
+  specs: string;
+  location: string;
+  image: any;
+  timer: string;
+};
+
+// Define your navigation param list
+type HomeStackParamList = {
+  HomeScreen: undefined;
+  CarListScreen: undefined;
+  ProductDetail: { car: Car };
+};
+
+const cars: Car[] = [
   {
     id: '1',
     title: 'Maruti Suzuki Dzire 2009',
@@ -18,66 +36,61 @@ const cars = [
     specs: '2009 • 150,000 km',
     location: 'Baner, Pune',
     image: require('../assets/icons/Hyundai.png'),
-    timer: '00:02:45'
+    timer: '00:02:45',
   },
-
-  { 
-   id: '2',
+  {
+    id: '2',
     title: 'Maruti Suzuki Dzire 2009',
     price: '₹2,50,000',
     specs: '2009 • 150,000 km',
     location: 'Baner, Pune',
     image: require('../assets/icons/Hyundai.png'),
-    timer: '00:02:45'
+    timer: '00:02:45',
   },
-
-   { 
-   id: '3',
+  {
+    id: '3',
     title: 'Maruti Suzuki Dzire 2009',
     price: '₹2,50,000',
     specs: '2009 • 150,000 km',
     location: 'Baner, Pune',
     image: require('../assets/icons/Hyundai.png'),
-    timer: '00:02:45'
+    timer: '00:02:45',
   },
 
-   { 
-   id: '4',
+  {
+    id: '4',
     title: 'Maruti Suzuki Dzire 2009',
     price: '₹2,50,000',
     specs: '2009 • 150,000 km',
     location: 'Baner, Pune',
     image: require('../assets/icons/Hyundai.png'),
-    timer: '00:02:45'
+    timer: '00:02:45',
   },
-
-   { 
-   id: '5',
+  {
+    id: '5',
     title: 'Maruti Suzuki Dzire 2009',
     price: '₹2,50,000',
     specs: '2009 • 150,000 km',
     location: 'Baner, Pune',
     image: require('../assets/icons/Hyundai.png'),
-    timer: '00:02:45'
+    timer: '00:02:45',
   },
-
-   { 
-   id: '6',
+  {
+    id: '6',
     title: 'Maruti Suzuki Dzire 2009',
     price: '₹2,50,000',
     specs: '2009 • 150,000 km',
     location: 'Baner, Pune',
     image: require('../assets/icons/Hyundai.png'),
-    timer: '00:02:45'
+    timer: '00:02:45',
   },
 
-
-  
-  // Duplicate or add more cars as needed
+  // Add more cars as needed, make sure ids are unique
 ];
 
 const CarListScreen = () => {
-  const navigation = useNavigation();
+  // Properly type navigation to use param list
+  const navigation = useNavigation<NavigationProp<HomeStackParamList>>();
 
   return (
     <View style={styles.container}>
@@ -100,8 +113,12 @@ const CarListScreen = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.carGrid}>
-        {cars.map((car) => (
-          <View key={car.id} style={styles.card}>
+        {cars.map(car => (
+          <TouchableOpacity
+            key={car.id}
+            style={styles.card}
+            onPress={() => navigation.navigate('ProductDetail', { car })}
+          >
             <Image source={car.image} style={styles.carImage} />
             <View style={styles.timerBadge}>
               <Icon name="time-outline" size={12} color="#fff" />
@@ -114,7 +131,7 @@ const CarListScreen = () => {
               <Icon name="location-outline" size={14} color="#888" />
               <Text style={styles.locationText}>{car.location}</Text>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </View>
@@ -185,7 +202,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 6,
     position: 'absolute',
-    top: 10,
+    top: 99,
     left: 10,
     alignItems: 'center',
     gap: 4,
