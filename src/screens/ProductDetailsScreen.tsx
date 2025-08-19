@@ -8,6 +8,8 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -33,6 +35,16 @@ export default function ProductDetailsScreen() {
   const route = useRoute<ProductDetailRouteProp>();
   const { car } = route.params;
   const [activeTab, setActiveTab] = useState<'product' | 'owner'>('product');
+
+  // Modal state
+  const [showOffer, setShowOffer] = useState(false);
+  const [offer, setOffer] = useState(248000);
+
+  const increment = () => setOffer(offer + 1000);
+  const decrement = () => setOffer(offer > 1000 ? offer - 1000 : 0);
+
+  const formatNumber = (num: number) =>
+    num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   return (
     <View style={styles.container}>
@@ -140,10 +152,53 @@ export default function ProductDetailsScreen() {
         <TouchableOpacity style={styles.chatButton}>
           <Text style={styles.buttonText}>💬 Chat</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bidButton}>
+        <TouchableOpacity
+          style={styles.bidButton}
+          onPress={() => setShowOffer(true)}
+        >
           <Text style={styles.buttonText}>🚀 Start Bidding</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Make Offer Modal */}
+      <Modal visible={showOffer} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={styles.modalBox}>
+            {/* Header */}
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Make Offer</Text>
+              <TouchableOpacity onPress={() => setShowOffer(false)}>
+                <Text style={styles.close}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Input with +/- buttons */}
+            <View style={styles.row}>
+              <TouchableOpacity style={styles.circleBtn} onPress={decrement}>
+                <Text style={styles.symbol}>−</Text>
+              </TouchableOpacity>
+
+              <TextInput
+                style={styles.input}
+                value={formatNumber(offer)}
+                editable={false}
+              />
+
+              <TouchableOpacity style={styles.circleBtn} onPress={increment}>
+                <Text style={styles.symbol}>+</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Display Price */}
+            <Text style={styles.priceText}>₹ {formatNumber(offer)}</Text>
+
+            {/* Send button */}
+            <TouchableOpacity style={styles.sendBtn}>
+              <Text style={styles.sendText}>Send</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -151,7 +206,7 @@ export default function ProductDetailsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   imageContainer: { position: 'relative' },
-  productImage: { width: '100%', height: 220 },
+  productImage: { width: '100%', height: 300 },
   imageOverlay: {
     position: 'absolute',
     top: 0,
@@ -238,6 +293,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     marginRight: 6,
+    bottom: 10,
   },
   bidButton: {
     flex: 1,
@@ -246,6 +302,64 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     marginLeft: 6,
+    bottom: 10,
   },
   buttonText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+
+  // Modal styles
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#fff',
+    width: '80%',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 20,
+  },
+  modalTitle: { fontSize: 18, fontWeight: '600' },
+  close: { fontSize: 20, fontWeight: '600', color: '#444' },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  circleBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  symbol: { fontSize: 22, fontWeight: '600' },
+  input: {
+    fontSize: 18,
+    fontWeight: '500',
+    textAlign: 'center',
+    marginHorizontal: 15,
+    minWidth: 100,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    paddingVertical: 5,
+  },
+  priceText: { fontSize: 20, fontWeight: '700', marginVertical: 10 },
+  sendBtn: {
+    backgroundColor: '#0f172a',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 40,
+    marginTop: 10,
+  },
+  sendText: { color: '#fff', fontSize: 16, fontWeight: '600' },
 });
